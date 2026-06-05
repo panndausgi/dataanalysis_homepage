@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="ja" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>データ分析アプリ - モックアップ</title>
+  <!-- Google Fonts: Outfit & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS v4 CDN -->
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --font-sans: 'Outfit', 'Noto Sans JP', sans-serif;
+    }
+    
+    /* スムーズなトランジション用 */
+    .screen-transition {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .screen-hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96) translateY(12px);
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .screen-active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+      position: relative;
+    }
+  </style>
+</head>
+<body class="bg-linear-to-br from-indigo-50 via-slate-50 to-emerald-50 min-h-screen flex items-center justify-center p-0 sm:p-4 md:p-8 font-sans antialiased text-slate-800">
+
+  <!-- モバイルモックアップコンテナ -->
+  <div class="w-full max-w-md h-screen sm:h-[840px] bg-white sm:rounded-[40px] sm:shadow-2xl overflow-hidden flex flex-col relative sm:border-8 sm:border-slate-900/95">
+    
+    <!-- スマホの上部ノッチ/スピーカー（PC表示時のみ） -->
+    <div class="hidden sm:block absolute top-0 left-1/2 -translate-x-1/2 w-40 h-6 bg-slate-900 rounded-b-2xl z-50">
+      <div class="w-12 h-1 bg-slate-700 mx-auto mt-1.5 rounded-full"></div>
+    </div>
+    
+    <!-- スマホのステータスバーを模したヘッダー -->
+    <div class="h-10 px-6 pt-3 flex justify-between items-center text-xs font-semibold text-slate-400 select-none z-40 bg-white/80 backdrop-blur-md">
+      <span id="statusBarTime">09:41</span>
+      <div class="flex items-center space-x-1.5">
+        <!-- 電波マーク -->
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L17.61 4.97C16.07 3.74 14.12 3 12 3zm7.61 5.39l-12.64 12.64C8.4 21.74 10.12 22 12 22c4.97 0 9-4.03 9-9 0-2.12-.74-4.07-1.97-5.61z"/></svg>
+        <!-- バッテリーマーク -->
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm1 9h-2V9h2v5zm4-5v6h-1V9h1z"/></svg>
+      </div>
+    </div>
+
+    <!-- コンテンツ表示エリア -->
+    <div class="flex-1 relative overflow-hidden flex flex-col bg-white">
+      
+      <!-- ==========================================
+           【画面1：トップページ】
+           ========================================== -->
+      <div id="screen1" class="screen-transition screen-active flex flex-col justify-between h-full p-8 pt-4">
+        
+        <!-- ヘッダー装飾（親しみやすいドットデザインなど） -->
+        <div class="flex justify-between items-center">
+          <div class="flex space-x-1.5">
+            <span class="w-3 h-3 rounded-full bg-indigo-500/20"></span>
+            <span class="w-3 h-3 rounded-full bg-emerald-500/20"></span>
+            <span class="w-3 h-3 rounded-full bg-amber-500/20"></span>
+          </div>
+          <span class="text-xs font-bold tracking-widest text-indigo-600/60 uppercase">Analytica</span>
+        </div>
+
+        <!-- メインコンテンツ -->
+        <div class="flex-1 flex flex-col items-center justify-center my-6 space-y-8">
+          
+          <!-- かわいいSVGデータ分析イラスト -->
+          <div class="relative w-64 h-64 flex items-center justify-center">
+            <!-- 背景のソフトな円グラデーション -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-emerald-500/10 rounded-full blur-2xl animate-pulse"></div>
+            
+            <!-- SVGイラスト -->
+            <svg class="w-52 h-52 relative z-10" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- 背景のグリッド風ドット -->
+              <circle cx="30" cy="40" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="60" cy="40" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="90" cy="40" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="120" cy="40" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="150" cy="40" r="2" fill="#818CF8" opacity="0.3"/>
+              
+              <circle cx="30" cy="70" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="60" cy="70" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="90" cy="70" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="120" cy="70" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="150" cy="70" r="2" fill="#818CF8" opacity="0.3"/>
+              
+              <circle cx="30" cy="100" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="60" cy="100" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="90" cy="100" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="120" cy="100" r="2" fill="#818CF8" opacity="0.3"/>
+              <circle cx="150" cy="100" r="2" fill="#818CF8" opacity="0.3"/>
+
+              <!-- 円グラフのベース -->
+              <circle cx="100" cy="100" r="65" stroke="#F1F5F9" stroke-width="12"/>
+              <!-- カラフルな円グラフ（ドーナツ） -->
+              <circle cx="100" cy="100" r="65" stroke="url(#paint0_linear)" stroke-width="14" stroke-dasharray="408" stroke-dashoffset="140" stroke-linecap="round" transform="rotate(-90 100 100)"/>
+              <circle cx="100" cy="100" r="65" stroke="url(#paint1_linear)" stroke-width="14" stroke-dasharray="408" stroke-dashoffset="320" stroke-linecap="round" transform="rotate(150 100 100)"/>
+              
+              <!-- 中央のアイコンまたは装飾 -->
+              <circle cx="100" cy="100" r="30" fill="white" filter="drop-shadow(0px 4px 10px rgba(99, 102, 241, 0.1))"/>
+              
+              <!-- 上昇の矢印/グラフライン -->
+              <path d="M75 125L92 108L108 120L135 85" stroke="#10B981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M123 85H135V97" fill="none" stroke="#10B981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              
+              <!-- グラデーション定義 -->
+              <defs>
+                <linearGradient id="paint0_linear" x1="35" y1="35" x2="165" y2="165" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#6366F1"/>
+                  <stop offset="1" stop-color="#4F46E5"/>
+                </linearGradient>
+                <linearGradient id="paint1_linear" x1="35" y1="35" x2="165" y2="165" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#10B981"/>
+                  <stop offset="1" stop-color="#059669"/>
+                </linearGradient>
+              </defs>
+            </svg>
+
+            <!-- フローティングする装飾カード -->
+            <div class="absolute bottom-2 -right-2 bg-white px-3 py-1.5 rounded-xl shadow-lg border border-slate-100 flex items-center space-x-1.5 animate-bounce" style="animation-duration: 3s;">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span class="text-[10px] font-bold text-slate-500">データ分析中</span>
+            </div>
+            
+            <div class="absolute top-4 -left-4 bg-white p-2.5 rounded-xl shadow-lg border border-slate-100 flex items-center justify-center animate-pulse">
+              <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+            </div>
+          </div>
+
+          <!-- タイトルエリア -->
+          <div class="text-center space-y-3">
+            <h1 class="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
+              データ分析
+            </h1>
+            <p class="text-sm font-medium text-slate-500 max-w-[280px] mx-auto leading-relaxed">
+              あなたのビジネスやアイデアの未来を、データから見つけ出しましょう。
+            </p>
+          </div>
+          
+        </div>
+
+        <!-- 下部アクションエリア -->
+        <div class="pb-8 space-y-3">
+          <button id="btnStart" class="w-full py-4 px-6 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-lg rounded-2xl shadow-xl shadow-indigo-600/25 hover:shadow-indigo-600/35 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-98 cursor-pointer flex items-center justify-center space-x-2">
+            <span>はじめる</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
+          </button>
+          <button id="btnGoToCalendar" class="w-full py-3 px-6 bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-200 font-bold text-base rounded-2xl shadow-xs transition-all duration-300 transform hover:-translate-y-0.5 active:scale-98 cursor-pointer flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"/></svg>
+            <span>履歴カレンダーを見る</span>
+          </button>
+          <button id="btnGoToProductReg" class="w-full py-3 px-6 bg-white hover:bg-slate-50 text-slate-700 border-2 border-slate-200 font-bold text-base rounded-2xl shadow-xs transition-all duration-300 transform hover:-translate-y-0.5 active:scale-98 cursor-pointer flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l6.499 6.499c.404.404.935.617 1.474.617.54 0 1.07-.213 1.474-.617l4.318-4.318c.404-.404.617-.935.617-1.474 0-.54-.213-1.07-.617-1.474L11.16 3.659A2.25 2.25 0 009.568 3zM6 7.5a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"/></svg>
+            <span>商品の登録・管理</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- ==========================================
+           【画面2：用途選択ページ】
+           ========================================== -->
+      <div id="screen2" class="screen-transition screen-hidden flex flex-col justify-between h-full p-8 pt-4">
+        
+        <!-- ヘッダー -->
+        <div class="flex items-center justify-between">
+          <button id="btnBack" class="p-2 -ml-2 rounded-xl text-slate-450 hover:text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer flex items-center space-x-1 text-sm font-semibold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+            <span>もどる</span>
+          </button>
+          <span class="text-xs font-bold tracking-widest text-indigo-600/60 uppercase">Step 1 of 2</span>
+        </div>
+
+        <!-- メインコンテンツ -->
+        <div class="flex-1 flex flex-col justify-center my-4 space-y-8">
+          
+          <!-- 質問エリア -->
+          <div class="space-y-2">
+            <span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full">質問</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              どのような用途？
+            </h2>
+            <p class="text-sm font-medium text-slate-400">
+              分析したい目的に最も近い方を選択してください。
+            </p>
+          </div>
+
+          <!-- 選択肢（縦並びボタン） -->
+          <div class="space-y-4">
+            
+            <!-- 選択肢1: お店を出したい -->
+            <button class="w-full text-left p-5 rounded-2xl border-2 border-slate-100 hover:border-indigo-500 bg-white hover:bg-indigo-50/20 shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 active:scale-99 cursor-pointer flex items-center space-x-4 group">
+              <!-- アイコンコンテナ -->
+              <div class="w-12 h-12 rounded-xl bg-rose-50 flex items-center justify-center text-rose-500 group-hover:bg-rose-500 group-hover:text-white transition-colors duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72M6.75 18h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .414.336.75.75.75z"/></svg>
+              </div>
+              <div class="flex-1">
+                <div class="text-lg font-bold text-slate-800 group-hover:text-indigo-900 transition-colors">お店を出したい</div>
+                <div class="text-xs text-slate-400 mt-0.5">新規開店・エリアマーケティング分析など</div>
+              </div>
+              <svg class="w-5 h-5 text-slate-300 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            </button>
+
+            <!-- 選択肢2: 売り上げを改善 -->
+            <button id="btnImproveSales" class="w-full text-left p-5 rounded-2xl border-2 border-slate-100 hover:border-indigo-500 bg-white hover:bg-indigo-50/20 shadow-xs hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 active:scale-99 cursor-pointer flex items-center space-x-4 group">
+              <!-- アイコンコンテナ -->
+              <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.5 4.5M21 7.5l-6-6-4.5 4.5M21 7.5V12M21 7.5H16.5"/></svg>
+              </div>
+              <div class="flex-1">
+                <div class="text-lg font-bold text-slate-800 group-hover:text-indigo-900 transition-colors">売り上げを改善</div>
+                <div class="text-xs text-slate-400 mt-0.5">既存店舗の売上アップ・顧客傾向分析など</div>
+              </div>
+              <svg class="w-5 h-5 text-slate-300 group-hover:text-indigo-500 transition-colors" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            </button>
+
+          </div>
+
+        </div>
+
+        <!-- 下部の進捗インジケータ -->
+        <div class="pb-6 flex flex-col items-center space-y-4">
+          <div class="flex space-x-2">
+            <span class="w-6 h-1.5 rounded-full bg-indigo-600"></span>
+            <span class="w-2 h-1.5 rounded-full bg-slate-200"></span>
+          </div>
+          <span class="text-xs text-slate-400 font-medium">どちらかを選択して次へ進んでください</span>
+        </div>
+
+      </div>
+
+      <!-- ==========================================
+           【画面3：日々のデータ入力画面】
+           ========================================== -->
+      <div id="screen3" class="screen-transition screen-hidden flex flex-col justify-between h-full p-6 pt-4 overflow-y-auto">
+        <!-- ヘッダー -->
+        <div class="flex items-center justify-between shrink-0 mb-4">
+          <button id="btnBackToScreen2" class="p-2 -ml-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer flex items-center space-x-1 text-sm font-semibold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+            <span>もどる</span>
+          </button>
+          <span class="text-xs font-bold tracking-widest text-indigo-600/60 uppercase">Step 2 of 2</span>
+        </div>
+
+        <!-- スクロール可能なフォームコンテンツ -->
+        <div class="flex-1 space-y-5 pb-6">
+          <!-- 導入テキスト -->
+          <div class="space-y-1">
+            <span class="inline-block px-3 py-1 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-full">入力</span>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">日々のデータ入力</h2>
+            <p class="text-xs font-medium text-slate-400">営業終了後の記録を数タップで完了します。</p>
+          </div>
+
+          <!-- フォームカード -->
+          <div class="space-y-4">
+            <!-- 1. 日付 -->
+            <div class="bg-slate-50/60 border border-slate-100 rounded-2xl p-4 space-y-2">
+              <label for="inputDate" class="text-xs font-bold text-slate-500 tracking-wider block">1. 営業日</label>
+              <div class="relative">
+                <input type="date" id="inputDate" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 font-bold focus:border-indigo-500 focus:outline-hidden transition-all duration-300">
+              </div>
+            </div>
+
+            <!-- 2. 天気 -->
+            <div class="bg-slate-50/60 border border-slate-100 rounded-2xl p-4 space-y-2">
+              <span class="text-xs font-bold text-slate-500 tracking-wider block">2. 天気</span>
+              <div class="grid grid-cols-4 gap-2">
+                <button type="button" data-weather="sunny" class="weather-btn flex flex-col items-center justify-center py-2.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-400 transition-all duration-200 cursor-pointer">
+                  <span class="text-2xl mb-1">☀️</span>
+                  <span class="text-[10px] font-bold text-slate-500">晴れ</span>
+                </button>
+                <button type="button" data-weather="cloudy" class="weather-btn flex flex-col items-center justify-center py-2.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-400 transition-all duration-200 cursor-pointer">
+                  <span class="text-2xl mb-1">☁️</span>
+                  <span class="text-[10px] font-bold text-slate-500">曇り</span>
+                </button>
+                <button type="button" data-weather="rainy" class="weather-btn flex flex-col items-center justify-center py-2.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-400 transition-all duration-200 cursor-pointer">
+                  <span class="text-2xl mb-1">☔</span>
+                  <span class="text-[10px] font-bold text-slate-500">雨</span>
+                </button>
+                <button type="button" data-weather="snowy" class="weather-btn flex flex-col items-center justify-center py-2.5 rounded-xl border border-slate-200 bg-white hover:border-indigo-400 transition-all duration-200 cursor-pointer">
+                  <span class="text-2xl mb-1">❄️</span>
+                  <span class="text-[10px] font-bold text-slate-500">雪</span>
+                </button>
+              </div>
+              <input type="hidden" id="inputWeather" value="sunny">
+            </div>
+
+            <!-- 3. 客数 -->
+            <div class="bg-slate-50/60 border border-slate-100 rounded-2xl p-4 space-y-2">
+              <label for="inputCustomers" class="text-xs font-bold text-slate-500 tracking-wider block">3. 客数 (人)</label>
+              <div class="flex items-center space-x-3">
+                <button type="button" id="btnDecCustomers" class="w-12 h-12 rounded-xl bg-white border border-slate-200 text-slate-650 hover:bg-slate-50 hover:border-slate-300 active:scale-95 transition-all flex items-center justify-center font-bold text-xl select-none cursor-pointer">
+                  －
+                </button>
+                <div class="flex-1 relative">
+                  <input type="number" id="inputCustomers" value="50" class="w-full text-center px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-lg font-bold text-slate-850 focus:border-indigo-500 focus:outline-hidden transition-all duration-300">
+                </div>
+                <button type="button" id="btnIncCustomers" class="w-12 h-12 rounded-xl bg-white border border-slate-200 text-slate-650 hover:bg-slate-50 hover:border-slate-300 active:scale-95 transition-all flex items-center justify-center font-bold text-xl select-none cursor-pointer">
+                  ＋
+                </button>
+              </div>
+            </div>
+
+            <!-- 4. 売上 -->
+            <div class="bg-slate-50/60 border border-slate-100 rounded-2xl p-4 space-y-2">
+              <label for="inputSales" class="text-xs font-bold text-slate-500 tracking-wider block">4. 売上金額 (円)</label>
+              <div class="relative flex items-center">
+                <span class="absolute left-4 text-xl font-bold text-slate-400">¥</span>
+                <input type="number" id="inputSales" placeholder="0" inputmode="numeric" class="w-full pl-9 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-xl font-black text-slate-800 focus:border-indigo-500 focus:outline-hidden transition-all duration-300 placeholder-slate-300">
+              </div>
+              <!-- クイック金額入力（忙しい店主に最適） -->
+              <div class="grid grid-cols-3 gap-1.5 pt-1">
+                <button type="button" data-add-sales="10000" class="quick-sales-btn py-1.5 px-2 bg-white hover:bg-slate-50 text-[10px] font-bold text-slate-600 border border-slate-200 rounded-lg transition-colors cursor-pointer">+1万円</button>
+                <button type="button" data-add-sales="50000" class="quick-sales-btn py-1.5 px-2 bg-white hover:bg-slate-50 text-[10px] font-bold text-slate-600 border border-slate-200 rounded-lg transition-colors cursor-pointer">+5万円</button>
+                <button type="button" id="btnClearSales" class="py-1.5 px-2 bg-rose-50 hover:bg-rose-100 text-[10px] font-bold text-rose-600 border border-rose-200 rounded-lg transition-colors cursor-pointer">クリア</button>
+              </div>
+            </div>
+
+            <!-- 5. 商品別の仕込み数と廃棄数 -->
+            <div id="dynamicProductInputs" class="space-y-3"></div>
+          </div>
+        </div>
+
+        <!-- 下部アクションエリア -->
+        <div class="pt-2 pb-6 shrink-0 bg-white/90 backdrop-blur-xs border-t border-slate-100 -mx-6 px-6">
+          <button id="btnSave" class="w-full py-4 px-6 bg-gradient-to-r from-emerald-500 to-teal-650 hover:from-emerald-650 hover:to-teal-700 text-white font-bold text-lg rounded-2xl shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-300 transform hover:-translate-y-0.5 active:scale-98 cursor-pointer flex items-center justify-center space-x-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            <span>データを保存する</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           【画面4：カレンダー画面】
+           ========================================== -->
+      <div id="screen4" class="screen-transition screen-hidden flex flex-col justify-between h-full p-5 pt-4 overflow-y-auto">
+        <!-- ヘッダー -->
+        <div class="flex items-center justify-between shrink-0 mb-3">
+          <button id="btnBackToScreen1FromCalendar" class="p-2 -ml-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer flex items-center space-x-1 text-sm font-semibold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+            <span>トップへ</span>
+          </button>
+          
+          <!-- 新設：商品登録画面へのボタン -->
+          <button id="btnGoToProductRegFromCalendar" class="p-2 rounded-xl text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50/50 transition-colors cursor-pointer flex items-center space-x-1 text-sm font-bold">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>商品登録</span>
+          </button>
+          
+          <button id="btnBackToScreen2FromCalendar" class="p-2 -mr-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer flex items-center space-x-1 text-sm font-semibold">
+            <span>用途選択へ</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </button>
+        </div>
+
+        <!-- メインコンテンツ -->
+        <div class="flex-1 flex flex-col space-y-4">
+          <!-- 導入テキスト -->
+          <div class="space-y-1 shrink-0">
+            <span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full">履歴</span>
+            <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">履歴カレンダー</h2>
+            <p class="text-xs font-medium text-slate-400">これまでの営業実績と廃棄データをカレンダーで確認できます。</p>
+          </div>
+
+          <!-- 月切り替えコントロール -->
+          <div class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-2xl p-3 shrink-0">
+            <button id="btnPrevMonth" class="p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 active:scale-95 transition-all cursor-pointer">
+              <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+            </button>
+            <span id="calendarYearMonth" class="text-lg font-extrabold text-slate-800">2026年6月</span>
+            <button id="btnNextMonth" class="p-2 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 active:scale-95 transition-all cursor-pointer">
+              <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            </button>
+          </div>
+
+          <!-- アクションボタンエリア -->
+          <div class="grid grid-cols-2 gap-2 shrink-0">
+            <button id="btnExportCSV" class="py-2.5 px-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-xs rounded-xl shadow-xs transition-all duration-200 active:scale-95 cursor-pointer flex items-center justify-center space-x-1.5">
+              <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+              <span>CSVエクスポート</span>
+            </button>
+            <button id="btnCopyPrompt" class="py-2.5 px-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-bold text-xs rounded-xl shadow-xs transition-all duration-200 active:scale-95 cursor-pointer flex items-center justify-center space-x-1.5">
+              <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v10.125c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z"/></svg>
+              <span>プロンプトコピー</span>
+            </button>
+          </div>
+
+          <!-- カレンダーエリア -->
+          <div class="flex-1 flex flex-col min-h-0 bg-slate-50/50 border border-slate-100 rounded-3xl p-3">
+            <!-- 曜日ヘッダー -->
+            <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 mb-2 shrink-0">
+              <div class="text-rose-500">日</div>
+              <div>月</div>
+              <div>火</div>
+              <div>水</div>
+              <div>木</div>
+              <div>金</div>
+              <div class="text-sky-500">土</div>
+            </div>
+            <!-- 日付グリッド -->
+            <div id="calendarDaysGrid" class="grid grid-cols-7 gap-1.5 flex-1 min-h-0">
+              <!-- JSで動的に生成 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 下部スペース調整 -->
+        <div class="h-4 shrink-0"></div>
+      </div>
+
+    </div>
+
+    <!-- トースト通知 -->
+    <div id="toast" class="absolute top-16 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md text-white text-xs font-bold py-3 px-5 rounded-2xl shadow-lg flex items-center space-x-2 transition-all duration-300 transform translate-y-[-20px] opacity-0 pointer-events-none z-50">
+      <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+      <span>データを保存しました！</span>
+    </div>
+
+    <!-- 詳細モーダル -->
+    <div id="detailModal" class="absolute inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-6 z-50 hidden opacity-0 transition-opacity duration-300">
+      <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl border border-slate-100 overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[80vh]">
+        <!-- モーダルヘッダー -->
+        <div class="p-5 pb-3 border-b border-slate-100 flex justify-between items-center bg-linear-to-r from-indigo-50 to-indigo-100/30 shrink-0">
+          <div>
+            <h3 id="modalDate" class="text-base font-extrabold text-slate-800">2026年06月02日</h3>
+            <p class="text-[10px] text-slate-400 font-bold tracking-wider">営業データ詳細</p>
+          </div>
+          <button id="btnCloseModal" class="p-2 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer text-slate-400 hover:text-slate-650">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <!-- モーダルコンテンツ -->
+        <div class="p-5 space-y-4 overflow-y-auto flex-1">
+          <!-- 天気と客数 -->
+          <div class="grid grid-cols-2 gap-3 shrink-0">
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+              <span class="text-[10px] font-bold text-slate-400 mb-1">天気</span>
+              <span id="modalWeatherIcon" class="text-2xl mb-0.5">☀️</span>
+              <span id="modalWeatherText" class="text-xs font-bold text-slate-600">晴れ</span>
+            </div>
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+              <span class="text-[10px] font-bold text-slate-400 mb-1">客数</span>
+              <div class="flex items-baseline space-x-0.5">
+                <span id="modalCustomers" class="text-xl font-black text-slate-800">50</span>
+                <span class="text-[10px] font-bold text-slate-400">人</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 売上金額 -->
+          <div class="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-4 text-center shrink-0">
+            <span class="text-[10px] font-bold text-indigo-500 tracking-wider block mb-1">売上金額</span>
+            <span class="text-xl font-black text-indigo-600">¥ <span id="modalSales">120,000</span></span>
+          </div>
+
+          <!-- 商品実績 (動的表示エリア) -->
+          <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
+            <span class="text-[10px] font-bold text-slate-400 tracking-wider block">商品別実績</span>
+            <div id="modalProductsContainer" class="space-y-3">
+              <!-- JSで動的に商品実績を生成 -->
+            </div>
+          </div>
+        </div>
+        <!-- ボタン -->
+        <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
+          <button id="btnCloseModalBtn" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-all cursor-pointer">
+            閉じる
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         【画面5：商品登録・管理画面】
+         ========================================== -->
+    <div id="screen5" class="screen-transition screen-hidden flex flex-col justify-between h-full p-6 pt-4 overflow-y-auto bg-white">
+      <!-- ヘッダー -->
+      <div class="flex items-center justify-between shrink-0 mb-4">
+        <button id="btnBackFromProductReg" class="p-2 -ml-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer flex items-center space-x-1 text-sm font-semibold">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+          <span>もどる</span>
+        </button>
+        <span class="text-xs font-bold tracking-widest text-indigo-600/60 uppercase">商品管理</span>
+      </div>
+
+      <!-- スクロール可能なコンテンツ -->
+      <div class="flex-1 space-y-6 pb-6">
+        <!-- 導入テキスト -->
+        <div class="space-y-1">
+          <span class="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 text-xs font-bold rounded-full">設定</span>
+          <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">商品の登録・管理</h2>
+          <p class="text-xs font-medium text-slate-400">日々入力する商品を登録、または削除します。</p>
+        </div>
+
+        <!-- 新規登録フォーム -->
+        <div class="bg-slate-50/60 border border-slate-100 rounded-2xl p-4 space-y-3">
+          <label for="inputProductName" class="text-xs font-bold text-slate-500 tracking-wider block">新規商品名</label>
+          <div class="flex space-x-2">
+            <input type="text" id="inputProductName" placeholder="例: クロワッサン" class="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-xl text-slate-800 font-bold focus:border-indigo-500 focus:outline-hidden transition-all duration-300">
+            <button id="btnRegisterProduct" class="px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-xs active:scale-95 transition-all cursor-pointer">
+              登録
+            </button>
+          </div>
+        </div>
+
+        <!-- 商品一覧 -->
+        <div class="space-y-3">
+          <span class="text-xs font-bold text-slate-500 tracking-wider block">登録中の商品一覧</span>
+          <div id="productsList" class="space-y-2 max-h-[280px] overflow-y-auto pr-1">
+            <!-- JSで動的に商品リストを生成 -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- スマホの下部バー（PC表示時のみ） -->
+    <div class="hidden sm:block h-7 bg-white relative z-40">
+      <div class="w-32 h-1 bg-slate-900 mx-auto mt-2 rounded-full"></div>
+    </div>
+
+  </div>
+
+  <script>
+    // 画面定義
+    const screen1 = document.getElementById('screen1');
+    const screen2 = document.getElementById('screen2');
+    const screen3 = document.getElementById('screen3');
+    const screen4 = document.getElementById('screen4');
+    const screen5 = document.getElementById('screen5');
+    
+    // ボタン等
+    const btnStart = document.getElementById('btnStart');
+    const btnBack = document.getElementById('btnBack');
+    const btnImproveSales = document.getElementById('btnImproveSales');
+    const btnBackToScreen2 = document.getElementById('btnBackToScreen2');
+    const btnSave = document.getElementById('btnSave');
+    const btnGoToCalendar = document.getElementById('btnGoToCalendar');
+    const btnBackToScreen1FromCalendar = document.getElementById('btnBackToScreen1FromCalendar');
+    const btnBackToScreen2FromCalendar = document.getElementById('btnBackToScreen2FromCalendar');
+    const toast = document.getElementById('toast');
+    
+    // 商品登録・管理画面用
+    const btnGoToProductReg = document.getElementById('btnGoToProductReg');
+    const btnGoToProductRegFromCalendar = document.getElementById('btnGoToProductRegFromCalendar');
+    const btnBackFromProductReg = document.getElementById('btnBackFromProductReg');
+    const btnRegisterProduct = document.getElementById('btnRegisterProduct');
+    const inputProductName = document.getElementById('inputProductName');
+    const productsList = document.getElementById('productsList');
+    
+    // 入力画面用
+    const dynamicProductInputs = document.getElementById('dynamicProductInputs');
+    
+    // カレンダー画面のアクションボタン
+    const btnExportCSV = document.getElementById('btnExportCSV');
+    const btnCopyPrompt = document.getElementById('btnCopyPrompt');
+    
+    // カレンダー操作用
+    const btnPrevMonth = document.getElementById('btnPrevMonth');
+    const btnNextMonth = document.getElementById('btnNextMonth');
+    const calendarYearMonth = document.getElementById('calendarYearMonth');
+    const calendarDaysGrid = document.getElementById('calendarDaysGrid');
+    
+    // モーダル用
+    const detailModal = document.getElementById('detailModal');
+    const btnCloseModal = document.getElementById('btnCloseModal');
+    const btnCloseModalBtn = document.getElementById('btnCloseModalBtn');
+    const modalDate = document.getElementById('modalDate');
+    const modalWeatherIcon = document.getElementById('modalWeatherIcon');
+    const modalWeatherText = document.getElementById('modalWeatherText');
+    const modalCustomers = document.getElementById('modalCustomers');
+    const modalSales = document.getElementById('modalSales');
+    const modalProductsContainer = document.getElementById('modalProductsContainer');
+
+    // 画面遷移管理
+    const screens = [screen1, screen2, screen3, screen4, screen5];
+    function navigateToScreen(targetScreen) {
+      screens.forEach(screen => {
+        if (screen === targetScreen) {
+          screen.classList.remove('screen-hidden');
+          screen.classList.add('screen-active');
+        } else {
+          screen.classList.remove('screen-active');
+          screen.classList.add('screen-hidden');
+        }
+      });
+    }
+
+    // 画面遷移元の記憶
+    let prevScreen = screen1;
+
+    // 画面遷移イベントリスナー
+    btnStart.addEventListener('click', () => navigateToScreen(screen2));
+    btnBack.addEventListener('click', () => navigateToScreen(screen1));
+    btnImproveSales.addEventListener('click', () => {
+      navigateToScreen(screen3);
+      loadProductsForInput();
+    });
+    btnBackToScreen2.addEventListener('click', () => navigateToScreen(screen2));
+    btnGoToCalendar.addEventListener('click', () => {
+      currentDate = new Date(); // 今日を基準にする
+      navigateToScreen(screen4);
+      loadAndRenderCalendar();
+    });
+    btnBackToScreen1FromCalendar.addEventListener('click', () => navigateToScreen(screen1));
+    btnBackToScreen2FromCalendar.addEventListener('click', () => navigateToScreen(screen2));
+    
+    btnGoToProductReg.addEventListener('click', () => {
+      prevScreen = screen1;
+      navigateToScreen(screen5);
+      loadProductsScreen5();
+    });
+    btnGoToProductRegFromCalendar.addEventListener('click', () => {
+      prevScreen = screen4;
+      navigateToScreen(screen5);
+      loadProductsScreen5();
+    });
+    btnBackFromProductReg.addEventListener('click', () => {
+      navigateToScreen(prevScreen);
+    });
+
+    // トースト表示ロジック
+    let toastTimeout;
+    function showToast(message, type = 'success') {
+      const toastText = toast.querySelector('span');
+      const toastIcon = toast.querySelector('svg');
+      
+      toastText.textContent = message;
+      
+      if (type === 'success') {
+        toast.className = "absolute top-16 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur-md text-white text-xs font-bold py-3 px-5 rounded-2xl shadow-lg flex items-center space-x-2 transition-all duration-300 transform z-50 opacity-100 translate-y-0";
+        toastIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>`;
+        toastIcon.className.baseVal = "w-4 h-4 text-emerald-400";
+      } else {
+        toast.className = "absolute top-16 left-1/2 -translate-x-1/2 bg-rose-600 text-white text-xs font-bold py-3 px-5 rounded-2xl shadow-lg flex items-center space-x-2 transition-all duration-300 transform z-50 opacity-100 translate-y-0";
+        toastIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>`;
+        toastIcon.className.baseVal = "w-4 h-4 text-white";
+      }
+      
+      toast.classList.remove('opacity-0', 'translate-y-[-20px]', 'pointer-events-none');
+      
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-[-20px]', 'pointer-events-none');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 3000);
+    }
+
+    // 日付の初期値を本日に設定する
+    const today = new Date().toISOString().split('T')[0];
+    const inputDate = document.getElementById('inputDate');
+    inputDate.value = today;
+
+    // 天気選択のロジック
+    const weatherBtns = document.querySelectorAll('.weather-btn');
+    const inputWeather = document.getElementById('inputWeather');
+
+    function setWeather(weatherValue) {
+      weatherBtns.forEach(btn => {
+        if (btn.dataset.weather === weatherValue) {
+          btn.classList.add('border-indigo-500', 'bg-indigo-50/50', 'text-indigo-600');
+          btn.classList.remove('border-slate-200', 'bg-white', 'text-slate-500');
+          const textSpan = btn.querySelector('span:last-child');
+          textSpan.classList.add('text-indigo-600');
+          textSpan.classList.remove('text-slate-500');
+        } else {
+          btn.classList.remove('border-indigo-500', 'bg-indigo-50/50', 'text-indigo-600');
+          btn.classList.add('border-slate-200', 'bg-white', 'text-slate-500');
+          const textSpan = btn.querySelector('span:last-child');
+          textSpan.classList.remove('text-indigo-600');
+          textSpan.classList.add('text-slate-500');
+        }
+      });
+      inputWeather.value = weatherValue;
+    }
+
+    weatherBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        setWeather(btn.dataset.weather);
+      });
+    });
+
+    setWeather('sunny');
+
+    // 客数増減のロジック
+    const inputCustomers = document.getElementById('inputCustomers');
+    document.getElementById('btnDecCustomers').addEventListener('click', () => {
+      let val = parseInt(inputCustomers.value) || 0;
+      if (val > 0) inputCustomers.value = val - 1;
+    });
+    document.getElementById('btnIncCustomers').addEventListener('click', () => {
+      let val = parseInt(inputCustomers.value) || 0;
+      inputCustomers.value = val + 1;
+    });
+
+    // 売上クイック入力のロジック
+    const inputSales = document.getElementById('inputSales');
+    document.querySelectorAll('.quick-sales-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        let addVal = parseInt(btn.dataset.addSales) || 0;
+        let currentVal = parseInt(inputSales.value) || 0;
+        inputSales.value = currentVal + addVal;
+      });
+    });
+    document.getElementById('btnClearSales').addEventListener('click', () => {
+      inputSales.value = '';
+    });
+
+    // API連携: データを保存するボタンのロジック
+    btnSave.addEventListener('click', () => {
+      if (!inputDate.value) {
+        showToast('営業日を選択してください。', 'error');
+        return;
+      }
+      if (!inputSales.value || parseInt(inputSales.value) < 0) {
+        showToast('売上金額を正しく入力してください。', 'error');
+        return;
+      }
+
+      // 商品データの収集
+      const productRecords = [];
+      const cards = dynamicProductInputs.querySelectorAll('.product-input-card');
+      let validationError = false;
+      cards.forEach(card => {
+        const productId = parseInt(card.dataset.productId);
+        const prepared = parseInt(card.querySelector('.input-prepared').value) || 0;
+        const wasted = parseInt(card.querySelector('.input-wasted').value) || 0;
+        
+        if (wasted > prepared) {
+          showToast(`${card.dataset.productName}の廃棄数が仕込み数を超えています。`, 'error');
+          validationError = true;
+          return;
+        }
+        
+        productRecords.push({
+          product_id: productId,
+          prepared: prepared,
+          wasted: wasted
+        });
+      });
+      
+      if (validationError) return;
+
+      const reportData = {
+        date: inputDate.value,
+        weather: inputWeather.value,
+        customers: parseInt(inputCustomers.value) || 0,
+        sales: parseInt(inputSales.value) || 0,
+        products: productRecords
+      };
+
+      // API POST送信
+      fetch('http://127.0.0.1:8000/api/reports', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reportData)
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('API保存に失敗しました。');
+        }
+        return response.json();
+      })
+      .then(data => {
+        showToast('データを保存しました！', 'success');
+
+        // フォームのリセット
+        inputDate.value = today;
+        setWeather('sunny');
+        inputCustomers.value = 50;
+        inputSales.value = '';
+        
+        // カレンダー画面に遷移
+        const savedDate = new Date(reportData.date);
+        currentDate = savedDate;
+
+        setTimeout(() => {
+          navigateToScreen(screen4);
+          loadAndRenderCalendar();
+        }, 1200);
+      })
+      .catch(error => {
+        console.error('Error saving data:', error);
+        showToast('エラー: ' + error.message, 'error');
+      });
+    });
+
+    // カレンダー状態
+    let currentDate = new Date();
+
+    // 天気と文字/絵文字のマッピング
+    const weatherMap = {
+      sunny: { icon: '☀️', text: '晴れ' },
+      cloudy: { icon: '☁️', text: '曇り' },
+      rainy: { icon: '☔', text: '雨' },
+      snowy: { icon: '❄️', text: '雪' }
+    };
+
+    // 売上表示のフォーマット
+    function formatSalesBadge(sales) {
+      if (sales >= 10000) {
+        return (Math.round((sales / 10000) * 10) / 10) + '万';
+      } else {
+        return sales + '円';
+      }
+    }
+
+    // 月切り替えボタンのイベントリスナー
+    btnPrevMonth.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      loadAndRenderCalendar();
+    });
+
+    btnNextMonth.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      loadAndRenderCalendar();
+    });
+
+    // APIから月データを取得してカレンダーを描画する
+    function loadAndRenderCalendar() {
+      const year = currentDate.getFullYear();
+      const month = currentDate.getMonth();
+      const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+      
+      calendarYearMonth.textContent = `${year}年${month + 1}月`;
+      
+      // グリッドを一旦ローディング状態にする
+      calendarDaysGrid.innerHTML = `
+        <div class="col-span-7 flex items-center justify-center py-12">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-650"></div>
+        </div>
+      `;
+
+      fetch(`http://127.0.0.1:8000/api/reports?month=${monthStr}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('データ取得に失敗しました。');
+        }
+        return response.json();
+      })
+      .then(reports => {
+        // マップ化
+        const reportsMap = {};
+        reports.forEach(r => {
+          reportsMap[r.date] = r;
+        });
+        
+        renderCalendar(year, month, reportsMap);
+      })
+      .catch(error => {
+        console.error('Error fetching calendar data:', error);
+        showToast('データ取得エラー: ' + error.message, 'error');
+        renderCalendar(year, month, {});
+      });
+    }
+
+    // カレンダーの描画
+    function renderCalendar(year, month, reportsMap) {
+      calendarDaysGrid.innerHTML = '';
+      
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const prevMonthTotalDays = new Date(year, month, 0).getDate();
+      
+      // 前月の余り日
+      for (let i = firstDayIndex; i > 0; i--) {
+        const dayNum = prevMonthTotalDays - i + 1;
+        const cell = document.createElement('div');
+        cell.className = "min-h-[64px] p-1 border border-slate-100/50 rounded-xl text-slate-350 text-[10px] font-semibold bg-slate-50/10 select-none flex flex-col justify-between opacity-40";
+        cell.innerHTML = `<span>${dayNum}</span>`;
+        calendarDaysGrid.appendChild(cell);
+      }
+      
+      // 今月の日数
+      for (let day = 1; day <= totalDays; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const report = reportsMap[dateStr];
+        
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        
+        const isToday = (year === new Date().getFullYear() && month === new Date().getMonth() && day === new Date().getDate());
+        let cellClass = "min-h-[64px] p-1 border rounded-xl text-left text-[10px] font-extrabold transition-all flex flex-col justify-between relative cursor-default";
+        
+        if (isToday) {
+          cellClass += " ring-2 ring-indigo-500/50 bg-indigo-50/20 border-indigo-200 text-indigo-600";
+        } else {
+          cellClass += " bg-white border-slate-100";
+        }
+
+        let badgeHtml = '';
+        if (report) {
+          cellClass += " hover:bg-indigo-50/50 hover:border-indigo-300 cursor-pointer shadow-xs";
+          const salesFormatted = formatSalesBadge(report.sales);
+          const weather = weatherMap[report.weather] || { icon: '☀️' };
+          
+          badgeHtml = `
+            <div class="mt-0.5 flex flex-col items-stretch space-y-0.5 w-full">
+              <div class="flex justify-between items-center px-0.5">
+                <span class="text-[9px]">✅</span>
+                <span class="text-[10px]">${weather.icon}</span>
+              </div>
+              <span class="text-[9px] font-black text-indigo-600 bg-indigo-50 px-1 py-0.5 rounded-md block w-full text-center truncate">
+                ${salesFormatted}
+              </span>
+            </div>
+          `;
+          
+          cell.addEventListener('click', () => showDetailModal(report));
+        } else {
+          cellClass += " text-slate-500 hover:bg-slate-50/50";
+        }
+
+        cell.className = cellClass;
+        cell.innerHTML = `
+          <span class="${isToday ? 'text-indigo-600 font-black' : 'text-slate-500'}">${day}</span>
+          ${badgeHtml}
+        `;
+        calendarDaysGrid.appendChild(cell);
+      }
+      
+      // 翌月の余り日
+      const currentCellsCount = firstDayIndex + totalDays;
+      const nextMonthCells = (7 - (currentCellsCount % 7)) % 7;
+      for (let day = 1; day <= nextMonthCells; day++) {
+        const cell = document.createElement('div');
+        cell.className = "min-h-[64px] p-1 border border-slate-100/50 rounded-xl text-slate-350 text-[10px] font-semibold bg-slate-50/10 select-none flex flex-col justify-between opacity-40";
+        cell.innerHTML = `<span>${day}</span>`;
+        calendarDaysGrid.appendChild(cell);
+      }
+    }
+
+    // モーダル表示ロジック
+    function showDetailModal(report) {
+      // 日付フォーマット
+      const dateObj = new Date(report.date);
+      const days = ['日', '月', '火', '水', '木', '金', '土'];
+      const dayOfWeek = days[dateObj.getDay()];
+      modalDate.textContent = `${dateObj.getFullYear()}年${String(dateObj.getMonth() + 1).padStart(2, '0')}月${String(dateObj.getDate()).padStart(2, '0')}日 (${dayOfWeek})`;
+      
+      const weather = weatherMap[report.weather] || { icon: '❓', text: '不明' };
+      modalWeatherIcon.textContent = weather.icon;
+      modalWeatherText.textContent = weather.text;
+      
+      modalCustomers.textContent = report.customers.toLocaleString();
+      modalSales.textContent = report.sales.toLocaleString();
+      
+      // 動的商品実績のレンダリング
+      modalProductsContainer.innerHTML = '';
+      if (!report.products || report.products.length === 0) {
+        modalProductsContainer.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">商品別の実績データはありません。</p>`;
+      } else {
+        report.products.forEach(p => {
+          const lossRate = p.prepared > 0 ? ((p.wasted / p.prepared) * 100).toFixed(1) + '%' : '0.0%';
+          const sold = p.prepared - p.wasted;
+          
+          const div = document.createElement('div');
+          div.className = "border-b border-slate-100 pb-2 last:border-b-0 last:pb-0";
+          div.innerHTML = `
+            <div class="flex justify-between items-center font-bold text-xs text-slate-700">
+              <span>${p.name}</span>
+              <span class="text-rose-600 font-extrabold text-[10px]">ロス率: ${lossRate}</span>
+            </div>
+            <div class="grid grid-cols-3 gap-1 mt-1 text-[10px] text-slate-500 font-semibold">
+              <div>仕込: <span class="font-bold text-slate-700">${p.prepared}</span></div>
+              <div>廃棄: <span class="font-bold text-rose-600">${p.wasted}</span></div>
+              <div>販売: <span class="font-bold text-emerald-650">${sold}</span></div>
+            </div>
+          `;
+          modalProductsContainer.appendChild(div);
+        });
+      }
+      
+      // モーダル表示 (フェードインアニメーション)
+      detailModal.classList.remove('hidden');
+      setTimeout(() => {
+        detailModal.classList.remove('opacity-0');
+        detailModal.classList.add('opacity-100');
+        detailModal.firstElementChild.classList.remove('scale-95');
+        detailModal.firstElementChild.classList.add('scale-100');
+      }, 10);
+    }
+
+    // モーダル非表示ロジック
+    function hideDetailModal() {
+      detailModal.classList.remove('opacity-100');
+      detailModal.classList.add('opacity-0');
+      detailModal.firstElementChild.classList.remove('scale-100');
+      detailModal.firstElementChild.classList.add('scale-95');
+      
+      setTimeout(() => {
+        detailModal.classList.add('hidden');
+      }, 300);
+    }
+
+    btnCloseModal.addEventListener('click', hideDetailModal);
+    btnCloseModalBtn.addEventListener('click', hideDetailModal);
+    
+    // 背景クリックで閉じる
+    detailModal.addEventListener('click', (e) => {
+      if (e.target === detailModal) {
+        hideDetailModal();
+      }
+    });
+
+    // スマホの時計を現在の時間に設定する
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('statusBarTime').textContent = `${hours}:${minutes}`;
+    }
+    updateClock();
+    setInterval(updateClock, 60000);
+
+    // 【画面3：データ入力画面の動的取得・構築】
+    function loadProductsForInput() {
+      dynamicProductInputs.innerHTML = `
+        <div class="flex items-center justify-center py-6">
+          <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-650"></div>
+        </div>
+      `;
+      fetch('http://127.0.0.1:8000/api/products')
+      .then(res => res.json())
+      .then(products => {
+        dynamicProductInputs.innerHTML = '';
+        if (products.length === 0) {
+          dynamicProductInputs.innerHTML = `
+            <div class="text-center py-4">
+              <p class="text-xs text-slate-400">登録されている商品がありません。</p>
+              <button type="button" id="btnGoToRegFromInput" class="mt-2 text-xs font-bold text-indigo-600 underline cursor-pointer">商品登録画面へ</button>
+            </div>
+          `;
+          document.getElementById('btnGoToRegFromInput')?.addEventListener('click', () => {
+            prevScreen = screen3;
+            navigateToScreen(screen5);
+            loadProductsScreen5();
+          });
+          return;
+        }
+        
+        products.forEach(product => {
+          const div = document.createElement('div');
+          div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-xs space-y-3 product-input-card";
+          div.dataset.productId = product.id;
+          div.dataset.productName = product.name;
+          div.innerHTML = `
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+              <span class="text-sm font-bold text-slate-800">${product.name}</span>
+            </div>
+            <!-- 仕込み数カウンター -->
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500">仕込み数</span>
+              <div class="flex items-center space-x-2">
+                <button type="button" class="btn-dec-prepared w-8 h-8 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-650 font-bold active:scale-90 transition-all flex items-center justify-center text-sm cursor-pointer">－</button>
+                <input type="number" class="input-prepared w-12 text-center font-bold text-slate-800 border-none focus:outline-hidden" value="0" min="0">
+                <button type="button" class="btn-inc-prepared w-8 h-8 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-650 font-bold active:scale-90 transition-all flex items-center justify-center text-sm cursor-pointer">＋</button>
+              </div>
+            </div>
+            <!-- 廃棄数カウンター -->
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-slate-500">廃棄数</span>
+              <div class="flex items-center space-x-2">
+                <button type="button" class="btn-dec-wasted w-8 h-8 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-650 font-bold active:scale-90 transition-all flex items-center justify-center text-sm cursor-pointer">－</button>
+                <input type="number" class="input-wasted w-12 text-center font-bold text-slate-800 border-none focus:outline-hidden" value="0" min="0">
+                <button type="button" class="btn-inc-wasted w-8 h-8 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-650 font-bold active:scale-90 transition-all flex items-center justify-center text-sm cursor-pointer">＋</button>
+              </div>
+            </div>
+          `;
+          
+          const inputPrepared = div.querySelector('.input-prepared');
+          const inputWasted = div.querySelector('.input-wasted');
+          
+          div.querySelector('.btn-dec-prepared').addEventListener('click', () => {
+            let val = parseInt(inputPrepared.value) || 0;
+            if (val > 0) inputPrepared.value = val - 1;
+          });
+          div.querySelector('.btn-inc-prepared').addEventListener('click', () => {
+            let val = parseInt(inputPrepared.value) || 0;
+            inputPrepared.value = val + 1;
+          });
+          
+          div.querySelector('.btn-dec-wasted').addEventListener('click', () => {
+            let val = parseInt(inputWasted.value) || 0;
+            if (val > 0) inputWasted.value = val - 1;
+          });
+          div.querySelector('.btn-inc-wasted').addEventListener('click', () => {
+            let val = parseInt(inputWasted.value) || 0;
+            inputWasted.value = val + 1;
+          });
+          
+          dynamicProductInputs.appendChild(div);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('商品一覧の読み込みに失敗しました。', 'error');
+      });
+    }
+
+    // 【画面5：商品一覧のロード、登録、論理削除】
+    function loadProductsScreen5() {
+      productsList.innerHTML = `
+        <div class="flex items-center justify-center py-6">
+          <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-650"></div>
+        </div>
+      `;
+      fetch('http://127.0.0.1:8000/api/products')
+      .then(res => res.json())
+      .then(products => {
+        productsList.innerHTML = '';
+        if (products.length === 0) {
+          productsList.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">登録されている商品はまだありません。</p>`;
+          return;
+        }
+        products.forEach(product => {
+          const div = document.createElement('div');
+          div.className = "flex justify-between items-center bg-slate-50/50 p-3 rounded-xl border border-slate-200 shadow-xs mb-2";
+          div.innerHTML = `
+            <span class="text-sm font-bold text-slate-700">${product.name}</span>
+            <button class="delete-product-btn p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg transition-colors cursor-pointer" data-id="${product.id}">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+            </button>
+          `;
+          
+          div.querySelector('.delete-product-btn').addEventListener('click', (e) => {
+            const id = e.currentTarget.dataset.id;
+            deleteProduct(id);
+          });
+          
+          productsList.appendChild(div);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('商品一覧の取得に失敗しました。', 'error');
+      });
+    }
+
+    btnRegisterProduct.addEventListener('click', () => {
+      const name = inputProductName.value.trim();
+      if (!name) {
+        showToast('商品名を入力してください。', 'error');
+        return;
+      }
+      
+      fetch('http://127.0.0.1:8000/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      })
+      .then(res => {
+        if (!res.ok) return res.json().then(d => { throw new Error(d.detail || '登録に失敗しました。') });
+        return res.json();
+      })
+      .then(data => {
+        showToast('商品を登録しました！', 'success');
+        inputProductName.value = '';
+        loadProductsScreen5();
+      })
+      .catch(err => {
+        showToast(err.message, 'error');
+      });
+    });
+
+    function deleteProduct(id) {
+      if (!confirm('本当にこの商品を削除しますか？')) return;
+      
+      fetch(`http://127.0.0.1:8000/api/products/${id}`, {
+        method: 'DELETE'
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('削除に失敗しました。');
+        return res.json();
+      })
+      .then(() => {
+        showToast('商品を削除しました。', 'success');
+        loadProductsScreen5();
+      })
+      .catch(err => {
+        showToast(err.message, 'error');
+      });
+    }
+
+    // 全期間CSVダウンロード
+    btnExportCSV.addEventListener('click', () => {
+      fetch('http://127.0.0.1:8000/api/reports')
+      .then(res => res.json())
+      .then(reports => {
+        if (reports.length === 0) {
+          showToast('エクスポートするデータがありません。', 'error');
+          return;
+        }
+        
+        const allProductNames = new Set();
+        reports.forEach(r => {
+          if (r.products) {
+            r.products.forEach(p => allProductNames.add(p.name));
+          }
+        });
+        const productNamesArray = Array.from(allProductNames);
+        
+        const headers = ['日付', '天気', '客数', '売上'];
+        productNamesArray.forEach(name => {
+          headers.push(`${name}_仕込み`);
+          headers.push(`${name}_廃棄`);
+        });
+        
+        const csvRows = [headers.join(',')];
+        reports.forEach(r => {
+          const row = [r.date, r.weather, r.customers, r.sales];
+          
+          productNamesArray.forEach(name => {
+            const pData = r.products ? r.products.find(p => p.name === name) : null;
+            if (pData) {
+              row.push(pData.prepared);
+              row.push(pData.wasted);
+            } else {
+              row.push(0);
+              row.push(0);
+            }
+          });
+          csvRows.push(row.join(','));
+        });
+        
+        const csvContent = csvRows.join('\n');
+        const blob = new Blob([new Uint8Array([0xEF, 0xBB, 0xBF]), csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `営業実績データ_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showToast('CSVを出力しました！', 'success');
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('CSVエクスポートに失敗しました。', 'error');
+      });
+    });
+
+    // AIおすすめプロンプトコピー機能
+    btnCopyPrompt.addEventListener('click', () => {
+      fetch('http://127.0.0.1:8000/api/reports')
+      .then(res => res.json())
+      .then(reports => {
+        if (reports.length === 0) {
+          showToast('コピーするデータがありません。', 'error');
+          return;
+        }
+        
+        const allProductNames = new Set();
+        reports.forEach(r => {
+          if (r.products) {
+            r.products.forEach(p => allProductNames.add(p.name));
+          }
+        });
+        const productNamesArray = Array.from(allProductNames);
+        
+        const headers = ['日付', '天気', '客数', '売上'];
+        productNamesArray.forEach(name => {
+          headers.push(`${name}_仕込み`);
+          headers.push(`${name}_廃棄`);
+        });
+        
+        const csvRows = [headers.join(',')];
+        reports.forEach(r => {
+          const row = [r.date, r.weather, r.customers, r.sales];
+          productNamesArray.forEach(name => {
+            const pData = r.products ? r.products.find(p => p.name === name) : null;
+            if (pData) {
+              row.push(pData.prepared);
+              row.push(pData.wasted);
+            } else {
+              row.push(0);
+              row.push(0);
+            }
+          });
+          csvRows.push(row.join(','));
+        });
+        const csvContent = csvRows.join('\n');
+        
+        const promptText = `以下の店舗の営業実績データを分析し、売上向上や商品廃棄ロスの削減に向けた具体的な改善提案をしてください。特に、天気や客数と各商品の仕込み数・廃棄数の関連性に着目してください。
+
+【営業実績データ (CSV形式)】
+\`\`\`csv
+${csvContent}
+\`\`\`
+
+よろしくお願いいたします。`;
+
+        navigator.clipboard.writeText(promptText)
+        .then(() => {
+          showToast('プロンプトをコピーしました！', 'success');
+        })
+        .catch(err => {
+          console.error(err);
+          showToast('コピーに失敗しました。', 'error');
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        showToast('プロンプト生成に失敗しました。', 'error');
+      });
+    });
+  </script>
+</body>
+</html>

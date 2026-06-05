@@ -1,0 +1,11 @@
+# Local SQLite Database
+data.db
+
+# Python caches
+__pycache__/
+*.pyc
+
+# Gemini/Agent configurations
+.gemini/
+.agents/
+.system_generated/

@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytica | データ分析で「今日の仕込み」を最適化</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS v4 CDN -->
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  
+  <style type="text/css">
+    /* フォントファミリーの指定 */
+    body {
+      font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+    }
+
+    /* カスタムアニメーション用のキーフレーム */
+    @keyframes float-slow {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(-12px) rotate(0.5deg);
+      }
+    }
+    
+    @keyframes float-delayed {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      50% {
+        transform: translateY(12px) rotate(-0.5deg);
+      }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 0 0 15px 2px rgba(16, 185, 129, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 25px 6px rgba(16, 185, 129, 0.4);
+      }
+    }
+
+    /* アニメーション用ユーティリティクラス */
+    .animate-float-slow {
+      animation: float-slow 6s ease-in-out infinite;
+    }
+
+    .animate-float-delayed {
+      animation: float-delayed 7s ease-in-out infinite;
+    }
+
+    .animate-pulse-glow {
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    /* スクロールアニメーション用 (Intersection Observer) */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 遅延用クラス */
+    .delay-100 { transition-delay: 100ms; }
+    .delay-200 { transition-delay: 200ms; }
+    .delay-300 { transition-delay: 300ms; }
+    .delay-400 { transition-delay: 400ms; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased selection:bg-indigo-500 selection:text-white overflow-x-hidden">
+
+  <!-- トースト通知コンテナ -->
+  <div id="toast-container" class="fixed top-6 right-6 z-50 flex flex-col gap-3 max-w-md w-full pointer-events-none"></div>
+
+  <!-- ナビゲーションヘッダー -->
+  <header class="fixed top-0 left-0 w-full z-40 bg-white/80 backdrop-blur-md border-b border-slate-100/80 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <!-- ロゴ -->
+      <a href="#" class="flex items-center gap-2 group">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-emerald-400 flex items-center justify-center shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform duration-300">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 8v8m-4-5v5m-4-2v2M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12z"></path>
+          </svg>
+        </div>
+        <span class="text-2xl font-black tracking-tight bg-gradient-to-r from-indigo-700 to-emerald-600 bg-clip-text text-transparent">Analytica</span>
+      </a>
+
+      <!-- ナビゲーションリンク (PC) -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+        <a href="#features" class="hover:text-indigo-600 transition-colors duration-200">機能特徴</a>
+        <a href="#customize" class="hover:text-indigo-600 transition-colors duration-200">カスタムプラン</a>
+        <a href="#pricing" class="hover:text-indigo-600 transition-colors duration-200">料金プラン</a>
+        <a href="#contact" class="hover:text-indigo-600 transition-colors duration-200">お問い合わせ</a>
+      </nav>
+
+      <!-- CTAボタン (PC) -->
+      <div class="hidden md:flex items-center gap-4">
+        <a href="index.html" class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 shadow-md shadow-indigo-100 hover:shadow-lg hover:shadow-indigo-200 hover:-translate-y-0.5 transition-all duration-200">
+          デモを試す (無料)
+        </a>
+      </div>
+
+      <!-- ハンバーガーメニューボタン (SP) -->
+      <button id="menu-btn" class="md:hidden p-2 text-slate-600 hover:text-slate-900 focus:outline-none" aria-label="メニューを開閉">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- モバイルメニュー -->
+    <div id="mobile-menu" class="hidden md:hidden absolute top-20 left-0 w-full bg-white border-b border-slate-100 shadow-lg px-6 py-6 transition-all duration-300">
+      <nav class="flex flex-col gap-4 font-semibold text-slate-600">
+        <a href="#features" class="hover:text-indigo-600 py-2 transition-colors duration-200">機能特徴</a>
+        <a href="#customize" class="hover:text-indigo-600 py-2 transition-colors duration-200">カスタムプラン</a>
+        <a href="#pricing" class="hover:text-indigo-600 py-2 transition-colors duration-200">料金プラン</a>
+        <a href="#contact" class="hover:text-indigo-600 py-2 transition-colors duration-200">お問い合わせ</a>
+        <hr class="border-slate-100 my-2">
+        <a href="index.html" class="w-full text-center py-3 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 shadow-md">
+          デモを試す (無料)
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ヒーローセクション (ファーストビュー) -->
+  <section class="relative pt-32 pb-24 md:pt-40 md:pb-36 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white overflow-hidden">
+    <!-- 装飾的な背景グラデーション光 -->
+    <div class="absolute top-1/4 left-1/10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/10 w-[40rem] h-[40rem] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
+      
+      <!-- キャッチコピーエリア -->
+      <div class="lg:col-span-7 space-y-8 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-400/20 text-indigo-300 text-xs font-semibold tracking-wider uppercase">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          個人飲食店・ベーカリー向け需要予測ツール
+        </div>
+        
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight leading-tight">
+          「今日の仕込み数」、<br>
+          <span class="bg-gradient-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">もう勘に頼る必要はありません。</span>
+        </h1>
+        
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto lg:mx-0">
+          毎日3タップの簡単記録で、AIが最も解析しやすいデータが自動で完成。ChatGPTに読み込ませるだけで、廃棄ロスの出ない最適な仕込み・発注量が分かります。
+        </p>
+
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+          <a href="index.html" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl text-base font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 shadow-xl shadow-emerald-950/40 hover:-translate-y-1 transition-all duration-300 animate-pulse-glow">
+            今すぐ無料デモを試す
+            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </a>
+          <a href="#features" class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 rounded-2xl text-base font-semibold text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-300">
+            機能をもっと知る
+          </a>
+        </div>
+
+        <!-- 実績・導入イメージ -->
+        <div class="pt-8 border-t border-white/10 flex flex-wrap justify-center lg:justify-start gap-x-8 gap-y-4 text-sm text-slate-400">
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>初期費用 ¥0 から開始可能</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>平均廃棄ロス率 40% 削減</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- スマホモックアップ ＆ アニメーションエリア -->
+      <div class="lg:col-span-5 relative flex justify-center items-center">
+        <!-- 浮遊する装飾カード1 -->
+        <div class="absolute -left-8 top-12 z-20 bg-slate-900/90 border border-slate-700/50 backdrop-blur-md p-4 rounded-2xl shadow-xl animate-float-slow max-w-[180px]">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="p-1 rounded-lg bg-emerald-500/20 text-emerald-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </span>
+            <span class="text-xs font-bold text-slate-200">売上改善</span>
+          </div>
+          <span class="text-sm font-semibold text-slate-300">廃棄ロス率 <span class="text-emerald-400 font-extrabold">68%</span> 削減</span>
+        </div>
+
+        <!-- 浮遊する装飾カード2 -->
+        <div class="absolute -right-8 bottom-20 z-20 bg-slate-900/90 border border-slate-700/50 backdrop-blur-md p-4 rounded-2xl shadow-xl animate-float-delayed max-w-[200px]">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="p-1 rounded-lg bg-indigo-500/20 text-indigo-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+              </svg>
+            </span>
+            <span class="text-xs font-bold text-slate-200">ワンクリック</span>
+          </div>
+          <span class="text-sm font-semibold text-indigo-300">AIプロンプトコピー完了</span>
+        </div>
+
+        <!-- スマホモックアップ本体 -->
+        <div class="relative w-72 h-[560px] bg-slate-900 border-[6px] border-slate-800 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col animate-float-slow">
+          <!-- スピーカー＆インカメラ (Dynamic Island風) -->
+          <div class="absolute top-3 left-1/2 -translate-x-1/2 w-28 h-4.5 bg-black rounded-full z-30 flex items-center justify-between px-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-slate-800"></span>
+            <span class="w-3.5 h-1 bg-slate-800 rounded-full"></span>
+          </div>
+
+          <!-- アプリ画面 -->
+          <div class="flex-1 bg-slate-950 p-4 pt-10 flex flex-col justify-between text-xs overflow-hidden">
+            <!-- アプリヘッダー -->
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
+              <div class="flex items-center gap-1.5">
+                <div class="w-5 h-5 rounded-md bg-indigo-600 flex items-center justify-center text-[10px] font-bold text-white">A</div>
+                <span class="font-bold text-slate-200">Analytica Mobile</span>
+              </div>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-semibold text-[10px]">稼働中</span>
+            </div>
+
+            <!-- 入力データのサマリー -->
+            <div class="space-y-2.5 mt-3">
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                <div class="text-[10px] text-slate-400 mb-1">本日の入力データ</div>
+                <div class="grid grid-cols-3 gap-1.5 text-center font-bold">
+                  <div class="bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+                    <span class="block text-slate-500 text-[8px] font-normal">天気</span>
+                    <span class="text-amber-400 text-xs">晴 ☀️</span>
+                  </div>
+                  <div class="bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+                    <span class="block text-slate-500 text-[8px] font-normal">客足</span>
+                    <span class="text-indigo-400 text-xs">多い</span>
+                  </div>
+                  <div class="bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+                    <span class="block text-slate-500 text-[8px] font-normal">残数</span>
+                    <span class="text-rose-400 text-xs">3個</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- AI予測結果カード -->
+              <div class="p-2.5 rounded-xl bg-gradient-to-br from-indigo-900/50 to-emerald-950/30 border border-emerald-500/20">
+                <div class="flex justify-between items-center mb-1">
+                  <span class="text-[10px] font-bold text-slate-200">明日(雨予報)の推奨仕込み数</span>
+                  <span class="text-[8px] text-emerald-400 font-semibold px-1 py-0.2 bg-emerald-500/10 rounded">AI予測</span>
+                </div>
+                <div class="text-lg font-black text-emerald-400 my-0.5">クロワッサン: 42個</div>
+                <p class="text-[9px] text-slate-400 leading-tight">
+                  「明日の午前中は雨予報のため、通常の客足より15%減少傾向。仕込み量を5個減らすことで廃棄を回避できます。」
+                </p>
+              </div>
+
+              <!-- 簡易折れ線グラフ (SVG) -->
+              <div class="p-2.5 rounded-xl bg-slate-900 border border-slate-800">
+                <div class="text-[9px] text-slate-400 mb-2 flex justify-between">
+                  <span>廃棄個数の推移</span>
+                  <span class="text-rose-400">-72% 削減中</span>
+                </div>
+                <!-- 折れ線グラフSVG -->
+                <svg class="w-full h-16" viewBox="0 0 100 30">
+                  <!-- 背景グリッド線 -->
+                  <line x1="0" y1="5" x2="100" y2="5" stroke="#1e293b" stroke-width="0.5" stroke-dasharray="2" />
+                  <line x1="0" y1="15" x2="100" y2="15" stroke="#1e293b" stroke-width="0.5" stroke-dasharray="2" />
+                  <line x1="0" y1="25" x2="100" y2="25" stroke="#1e293b" stroke-width="0.5" stroke-dasharray="2" />
+                  <!-- 導入前予測曲線(赤) -->
+                  <path d="M 0 5 Q 20 2 40 8 T 80 4 T 100 7" fill="none" stroke="#f43f5e" stroke-width="1" stroke-dasharray="1 1" opacity="0.4" />
+                  <!-- 導入後実績曲線(緑) -->
+                  <path d="M 0 10 Q 20 18 40 12 T 80 26 T 100 28" fill="none" stroke="#10b981" stroke-width="1.5" />
+                  <!-- グラデーション塗りつぶし -->
+                  <path d="M 0 10 Q 20 18 40 12 T 80 26 T 100 28 L 100 30 L 0 30 Z" fill="url(#grad)" opacity="0.1" />
+                  <defs>
+                    <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#10b981" />
+                      <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+            </div>
+
+            <!-- アクションボタン -->
+            <div class="mt-3">
+              <a href="index.html" class="block w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-center font-bold text-slate-100 hover:text-white transition-all shadow-md">
+                デモデータ入力を体験
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 課題セクション -->
+  <section id="problems" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+        <h2 class="text-xs font-bold text-indigo-600 tracking-widest uppercase mb-3">Problems</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          個人経営・少人数店舗の<br class="sm:hidden">こんなお悩み、ありませんか？
+        </p>
+        <p class="text-slate-500 mt-4">
+          データ分析の重要性は分かっていても、忙しい毎日の業務の中で続けるのは簡単ではありません。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- 課題1 -->
+        <div class="reveal p-8 rounded-3xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-50/50 hover:-translate-y-1 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-3">仕込みのロスが多い</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            余ったらすべて廃棄になり赤字。逆に早く売り切れすぎると売上の機会損失に。「ちょうどいい量」が勘だけでは予測できません。
+          </p>
+        </div>
+
+        <!-- 課題2 -->
+        <div class="reveal delay-100 p-8 rounded-3xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-50/50 hover:-translate-y-1 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-3">分析が難しそう</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            エクセルや専門的な分析ツールは設定も操作も複雑。ITや数学に自信がなく、数字を見るのが億劫になってしまいます。
+          </p>
+        </div>
+
+        <!-- 課題3 -->
+        <div class="reveal delay-200 p-8 rounded-3xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-indigo-100 hover:shadow-xl hover:shadow-indigo-50/50 hover:-translate-y-1 transition-all duration-300 group">
+          <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 mb-3">入力が面倒くさい</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">
+            営業終了後の疲れた体で、細かな売上データや天気をノートに転記する気力が湧かず、結局三日坊主で終わってしまいます。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3つの強み・機能紹介 -->
+  <section id="features" class="py-24 bg-slate-50 overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto mb-20 reveal">
+        <h2 class="text-xs font-bold text-indigo-600 tracking-widest uppercase mb-3">Key Features</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Analytica が選ばれる3つの強み
+        </p>
+        <p class="text-slate-500 mt-4">
+          高度なAI技術と、圧倒的に直感的な使いやすさを両立しました。
+        </p>
+      </div>
+
+      <!-- 特徴1: 左右レイアウト -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center mb-28">
+        <div class="lg:col-span-6 space-y-6 order-2 lg:order-1 reveal">
+          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">1</div>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            スマホで3タップ、<br>営業後に秒速でかんたん記録
+          </h3>
+          <p class="text-slate-600 leading-relaxed">
+            記録に必要なのは、今日の「天気」「客足」「パンの残数」の3つだけ。ボタンを選んでタップするだけのシンプルなUIなので、どんなに忙しい営業終了後でも迷わず、10秒で入力が完了します。
+          </p>
+          <ul class="space-y-3 font-semibold text-slate-700">
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              直感的なアイコン選択方式
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              スマホに特化したモバイルフレンドリー設計
+            </li>
+          </ul>
+        </div>
+        <!-- ビジュアル要素1 -->
+        <div class="lg:col-span-6 order-1 lg:order-2 reveal">
+          <div class="p-8 rounded-3xl bg-white border border-slate-100 shadow-xl shadow-slate-100/50">
+            <div class="text-xs text-slate-400 mb-4 font-bold flex justify-between items-center">
+              <span>デモ入力画面のプレビュー</span>
+              <span class="text-indigo-600">毎日3タップ</span>
+            </div>
+            <!-- モックUI -->
+            <div class="space-y-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-2">1. 今日の天気は？</label>
+                <div class="grid grid-cols-4 gap-2">
+                  <div class="p-3 text-center border-2 border-indigo-600 bg-indigo-50/50 rounded-xl font-bold text-slate-700 text-sm cursor-pointer transition-all">☀️ 晴</div>
+                  <div class="p-3 text-center border border-slate-200 rounded-xl text-slate-400 text-sm cursor-pointer hover:border-indigo-300">☁️ 曇</div>
+                  <div class="p-3 text-center border border-slate-200 rounded-xl text-slate-400 text-sm cursor-pointer hover:border-indigo-300">☔ 雨</div>
+                  <div class="p-3 text-center border border-slate-200 rounded-xl text-slate-400 text-sm cursor-pointer hover:border-indigo-300">☃️ 雪</div>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-600 mb-2">2. 客足はどうでしたか？</label>
+                <div class="grid grid-cols-3 gap-2">
+                  <div class="p-3 text-center border border-slate-200 rounded-xl text-slate-400 text-sm cursor-pointer hover:border-indigo-300">少ない</div>
+                  <div class="p-3 text-center border-2 border-indigo-600 bg-indigo-50/50 rounded-xl font-bold text-slate-700 text-sm cursor-pointer transition-all">普通</div>
+                  <div class="p-3 text-center border border-slate-200 rounded-xl text-slate-400 text-sm cursor-pointer hover:border-indigo-300">多い</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 特徴2: 左右レイアウト -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center mb-28">
+        <!-- ビジュアル要素2 -->
+        <div class="lg:col-span-6 reveal">
+          <div class="p-8 rounded-3xl bg-white border border-slate-100 shadow-xl shadow-slate-100/50 flex flex-col justify-center items-center">
+            <div class="w-full flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+              <span class="text-xs text-slate-400 font-bold">データエクスポート</span>
+              <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 font-semibold text-[10px]">AI最適化済</span>
+            </div>
+            <!-- CSV アイコンとフロー -->
+            <div class="flex items-center gap-6 my-4">
+              <div class="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shadow-inner">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+              </div>
+              <!-- 矢印 -->
+              <div class="flex items-center text-emerald-500 gap-1 animate-pulse">
+                <span class="text-lg font-bold">➔</span>
+                <span class="text-xs font-semibold">ChatGPT等へ</span>
+              </div>
+              <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-inner">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="w-full bg-slate-50 rounded-xl p-3 border border-slate-100 text-[10px] text-slate-500 font-mono mt-4">
+              date,weather,customer_footfall,croissant_leftover...<br>
+              2026-06-01,sunny,normal,3...<br>
+              2026-06-02,rainy,few,12...
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-span-6 space-y-6 reveal">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">2</div>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            AIが読み込みやすいCSVを<br>ワンクリックで一発エクスポート
+          </h3>
+          <p class="text-slate-600 leading-relaxed">
+            入力データは、ChatGPTやClaudeなどのAIツールが最も認識・処理しやすいデータ構造（ヘッダーと文字コード）で自動的に整理されます。余計な整形をすることなく、そのままアップロードするだけでスムーズに分析できます。
+          </p>
+          <ul class="space-y-3 font-semibold text-slate-700">
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              文字化けやフォーマットエラーを防ぐ自動最適化
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              過去の全データをCSVでローカルに保存可能
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 特徴3: 左右レイアウト -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+        <div class="lg:col-span-6 space-y-6 order-2 lg:order-1 reveal">
+          <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold">3</div>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            1クリックで完了！<br>高度なAI分析プロンプトをコピー
+          </h3>
+          <p class="text-slate-600 leading-relaxed">
+            AIへの聞き方に悩む必要はありません。「明日の仕込み数予測」「来週の発注計画」「廃棄削減アクションプラン」など、目的別のプロンプトテンプレートを用意。ワンクリックでコピーしてAIに貼り付けるだけで、プロ顔負けの分析結果が得られます。
+          </p>
+          <ul class="space-y-3 font-semibold text-slate-700">
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              需要予測の専門家が監修したプロンプト
+            </li>
+            <li class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              コピーした瞬間に使える直感的なボタン
+            </li>
+          </ul>
+        </div>
+        <!-- ビジュアル要素3 -->
+        <div class="lg:col-span-6 order-1 lg:order-2 reveal">
+          <div class="p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl text-white">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
+              <div class="flex items-center gap-2">
+                <span class="w-3.5 h-3.5 rounded-full bg-indigo-500"></span>
+                <span class="text-xs font-bold text-slate-300">分析指示プロンプトテンプレート</span>
+              </div>
+              <button id="copy-btn" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold border border-slate-700/50 hover:border-slate-600 transition-all flex items-center gap-1.5 cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                </svg>
+                <span>プロンプトをコピー</span>
+              </button>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80 text-xs font-mono leading-relaxed text-slate-300 select-all" id="prompt-text">
+              あなたはベーカリーの需要予測と店舗オペレーションの専門家です。
+添付されたCSVデータをもとに、以下の情報をふまえて分析を行ってください。
+1. 天気予報: 明日の天気【雨】
+2. 近隣イベント: 【特になし】
+上記を踏まえ、明日廃棄を出さないための「クロワッサン」の【推奨仕込み数】と、その決定理由をステップバイステップで提案してください。
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 店舗個別カスタマイズプラン -->
+  <section id="customize" class="relative py-28 bg-gradient-to-br from-indigo-900 via-slate-900 to-indigo-950 text-white overflow-hidden">
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50rem] h-[50rem] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-5xl mx-auto px-6 text-center relative z-10 space-y-8 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-400/20 text-emerald-300 text-xs font-semibold tracking-wider uppercase mx-auto">
+        店舗独自メニュー ＆ 業務フロー対応
+      </div>
+      
+      <h2 class="text-3xl sm:text-5xl font-black tracking-tight leading-tight max-w-4xl mx-auto">
+        貴店専用の「オーダーメイドシート」を構築
+      </h2>
+
+      <p class="text-slate-300 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
+        パン屋、カフェ、ケーキ屋、キッチンカーなど、メニューの数や業態によって「入力したい項目」や「予測したい対象」は異なります。Analyticaは、プロのデータサイエンティストが貴店に完全に最適化した「専用入力画面」と「AIプロンプト」を個別に開発します。
+      </p>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 max-w-4xl mx-auto text-left">
+        <div class="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">✓</div>
+          <h4 class="font-bold text-slate-100">メニューの最適化</h4>
+          <p class="text-xs text-slate-400">貴店の全メニューを登録し、仕込み・発注を同時に予測できる入力構成を開発。</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">✓</div>
+          <h4 class="font-bold text-slate-100">天気予報・外部API連携</h4>
+          <p class="text-xs text-slate-400">地域の天気予報データを自動で取得し、手入力すら省く高度なカスタマイズに対応。</p>
+        </div>
+        <div class="p-6 rounded-2xl bg-white/5 border border-white/10 space-y-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">✓</div>
+          <h4 class="font-bold text-slate-100">特有の要因分析</h4>
+          <p class="text-xs text-slate-400">近隣学校の長期休み、イベント、セールなど、店舗独自の変動要因を予測モデルに組み込み。</p>
+        </div>
+      </div>
+
+      <div class="pt-6">
+        <a href="#contact" class="inline-flex items-center justify-center px-8 py-4 rounded-2xl text-base font-bold text-slate-900 bg-white hover:bg-slate-100 shadow-xl shadow-indigo-950/20 hover:-translate-y-0.5 transition-all duration-200">
+          カスタマイズのご相談はこちら (無料)
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 料金プラン (Pricing) -->
+  <section id="pricing" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+        <h2 class="text-xs font-bold text-indigo-600 tracking-widest uppercase mb-3">Pricing Plans</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          店舗の成長に合わせたシンプルな料金
+        </p>
+        <p class="text-slate-500 mt-4">
+          まずは無料のフリープランから。必要に応じてアップグレードが可能です。
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
+        <!-- プラン1 -->
+        <div class="reveal p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-slate-200 flex flex-col justify-between transition-all duration-300">
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">フリープラン</h3>
+              <p class="text-xs text-slate-500 mt-1">まずは手軽にデータ収集を始めたい店舗向け</p>
+            </div>
+            <div class="flex items-baseline">
+              <span class="text-4xl font-black tracking-tight text-slate-900">¥0</span>
+              <span class="text-sm text-slate-500 font-semibold ml-2">/ 永年無料</span>
+            </div>
+            <hr class="border-slate-200">
+            <ul class="space-y-3.5 text-sm text-slate-600 font-medium">
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                スマホ簡単データ入力
+              </li>
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                CSVデータエクスポート
+              </li>
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                標準AIプロンプトのコピー
+              </li>
+              <li class="flex items-center gap-2.5 text-slate-400">
+                <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                データ保存期間：過去3ヶ月分
+              </li>
+            </ul>
+          </div>
+          <div class="mt-8">
+            <a href="index.html" class="block w-full text-center py-3.5 rounded-xl font-bold text-indigo-600 bg-white hover:bg-slate-100 border border-slate-200 hover:border-slate-300 shadow-sm transition-all">
+              デモを試す (無料)
+            </a>
+          </div>
+        </div>
+
+        <!-- プラン2 (おすすめ) -->
+        <div class="reveal delay-100 p-8 rounded-3xl bg-slate-950 text-white border-2 border-emerald-500 relative flex flex-col justify-between shadow-2xl transition-all duration-300 transform lg:-translate-y-2">
+          <!-- おすすめリボン -->
+          <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-full bg-emerald-500 text-slate-950 text-xs font-extrabold tracking-wider uppercase shadow-md shadow-emerald-500/20">
+            RECOMMENDED
+          </div>
+          
+          <div class="space-y-6">
+            <div class="pt-2">
+              <h3 class="text-lg font-bold text-slate-100">AIアシスタントプラン</h3>
+              <p class="text-xs text-slate-400 mt-1">コピペを無くし、アプリ内で即時に予測を得たい店舗向け</p>
+            </div>
+            <div class="flex items-baseline">
+              <span class="text-4xl font-black tracking-tight text-white">¥2,980</span>
+              <span class="text-sm text-slate-400 font-semibold ml-2">/ 月額 (税込)</span>
+            </div>
+            <hr class="border-slate-800">
+            <ul class="space-y-3.5 text-sm text-slate-300 font-medium">
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                フリープランの全機能
+              </li>
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <span class="text-emerald-400 font-semibold">アプリ内での自動AI需要予測</span>
+              </li>
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                ダッシュボード分析機能
+              </li>
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                データ保存期間：無制限
+              </li>
+            </ul>
+          </div>
+          <div class="mt-8">
+            <button onclick="showToast('AIアシスタントプランの14日間無料体験へのお申し込みを受け付けました！(デモシミュレーション)', 'success')" class="w-full text-center py-3.5 rounded-xl font-bold text-slate-950 bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/30 hover:-translate-y-0.5 transition-all cursor-pointer">
+              14日間無料で試す
+            </button>
+          </div>
+        </div>
+
+        <!-- プラン3 -->
+        <div class="reveal delay-200 p-8 rounded-3xl bg-slate-50 border border-slate-100 hover:border-slate-200 flex flex-col justify-between transition-all duration-300">
+          <div class="space-y-6">
+            <div>
+              <h3 class="text-lg font-bold text-slate-900">店舗カスタマイズプラン</h3>
+              <p class="text-xs text-slate-500 mt-1">独自メニューや既存の基幹システムと連動したい店舗向け</p>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-2xl font-black tracking-tight text-slate-900">初期 ¥50,000〜</span>
+              <span class="text-sm text-slate-500 font-semibold mt-1">月額保守: ¥9,800 / 月</span>
+            </div>
+            <hr class="border-slate-200">
+            <ul class="space-y-3.5 text-sm text-slate-600 font-medium">
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                貴店専用のカスタム入力画面構築
+              </li>
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                天気・カレンダーAPIとの完全連携
+              </li>
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                個別プロンプト調整 ＆ 定期改善MTG
+              </li>
+              <li class="flex items-center gap-2.5">
+                <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                </svg>
+                専任サポート（チャット ＆ 電話）
+              </li>
+            </ul>
+          </div>
+          <div class="mt-8">
+            <a href="#contact" class="block w-full text-center py-3.5 rounded-xl font-bold text-slate-800 bg-white hover:bg-slate-100 border border-slate-200 hover:border-slate-300 shadow-sm transition-all">
+              詳しく相談する (無料)
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- お問い合わせフォーム -->
+  <section id="contact" class="py-24 bg-slate-50">
+    <div class="max-w-4xl mx-auto px-6">
+      <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+        <h2 class="text-xs font-bold text-indigo-600 tracking-widest uppercase mb-3">Contact</h2>
+        <p class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          導入のご相談・お問い合わせ
+        </p>
+        <p class="text-slate-500 mt-4">
+          カスタマイズプランの御見積りや、機能についての疑問などお気軽にお問い合わせください。
+        </p>
+      </div>
+
+      <!-- 問い合わせフォーム本体 -->
+      <div class="bg-white rounded-3xl border border-slate-100 shadow-xl p-8 sm:p-10 reveal">
+        <form id="contact-form" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label for="name" class="block text-sm font-semibold text-slate-700 mb-2">お名前 <span class="text-rose-500 text-xs">*</span></label>
+              <input type="text" id="name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="山田 太郎">
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">メールアドレス <span class="text-rose-500 text-xs">*</span></label>
+              <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="example@domain.com">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <label for="shop-name" class="block text-sm font-semibold text-slate-700 mb-2">店舗名・会社名</label>
+              <input type="text" id="shop-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="Analytica Bakery">
+            </div>
+            <div>
+              <label for="business-type" class="block text-sm font-semibold text-slate-700 mb-2">業態 <span class="text-rose-500 text-xs">*</span></label>
+              <select id="business-type" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 text-sm transition-all bg-white">
+                <option value="" disabled selected>選択してください</option>
+                <option value="bakery">パン屋・ベーカリー</option>
+                <option value="cafe">カフェ・喫茶店</option>
+                <option value="foodtruck">キッチンカー</option>
+                <option value="patisserie">洋菓子・ケーキ屋</option>
+                <option value="other">その他飲食店</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="message" class="block text-sm font-semibold text-slate-700 mb-2">お問い合わせ内容 <span class="text-rose-500 text-xs">*</span></label>
+            <textarea id="message" required rows="5" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="お問い合わせ内容をご記入ください。"></textarea>
+          </div>
+
+          <!-- 個人情報同意チェック -->
+          <div class="flex items-start gap-2">
+            <input type="checkbox" id="privacy-agreement" required class="mt-1 w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500">
+            <label for="privacy-agreement" class="text-xs text-slate-500 leading-normal">
+              個人情報の取り扱いに関して、プライバシーポリシーに同意の上、送信してください。
+            </label>
+          </div>
+
+          <div>
+            <button type="submit" id="submit-btn" class="w-full py-4 rounded-2xl font-bold text-white bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 hover:-translate-y-0.5 shadow-lg shadow-indigo-100 hover:shadow-xl hover:shadow-indigo-200 transition-all cursor-pointer flex items-center justify-center gap-2">
+              送信する (無料相談)
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer class="bg-slate-950 text-slate-400 py-16 border-t border-slate-900">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+      <!-- 会社・ロゴ -->
+      <div class="space-y-4">
+        <a href="#" class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-600 to-emerald-400 flex items-center justify-center">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M16 8v8m-4-5v5m-4-2v2M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12z"></path>
+            </svg>
+          </div>
+          <span class="text-xl font-black tracking-tight text-white">Analytica</span>
+        </a>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          「今日の仕込み数」を科学し、廃棄ロスをゼロにする需要予測プラットフォーム。
+        </p>
+      </div>
+
+      <!-- リンク1 -->
+      <div>
+        <h4 class="text-sm font-bold text-slate-200 mb-4">プロダクト</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="#features" class="hover:text-white transition-colors">機能特徴</a></li>
+          <li><a href="#pricing" class="hover:text-white transition-colors">料金プラン</a></li>
+          <li><a href="index.html" class="hover:text-white transition-colors">デモシミュレータ</a></li>
+        </ul>
+      </div>
+
+      <!-- リンク2 -->
+      <div>
+        <h4 class="text-sm font-bold text-slate-200 mb-4">サポート・会社情報</h4>
+        <ul class="space-y-2 text-xs">
+          <li><a href="#contact" class="hover:text-white transition-colors">お問い合わせ</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">利用規約</a></li>
+          <li><a href="#" class="hover:text-white transition-colors">プライバシーポリシー</a></li>
+        </ul>
+      </div>
+
+      <!-- コピーライト -->
+      <div class="md:col-span-4 border-t border-slate-900 pt-8 mt-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-600 gap-4">
+        <span>© 2026 Analytica Inc. All rights reserved.</span>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-slate-400">Twitter</a>
+          <a href="#" class="hover:text-slate-400">Facebook</a>
+          <a href="#" class="hover:text-slate-400">GitHub</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript ロジック -->
+  <script>
+    // 1. スクロールアニメーション (Intersection Observer)
+    document.addEventListener('DOMContentLoaded', () => {
+      const reveals = document.querySelectorAll('.reveal');
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            observer.unobserve(entry.target); // 一度表示したら監視を終了
+          }
+        });
+      }, observerOptions);
+
+      reveals.forEach(el => observer.observe(el));
+    });
+
+    // 2. モバイルメニューのトグル
+    const menuBtn = document.getElementById('menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    if (menuBtn && mobileMenu) {
+      menuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+      });
+      // メニュー外クリックで閉じる
+      document.addEventListener('click', (e) => {
+        if (!menuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+          mobileMenu.classList.add('hidden');
+        }
+      });
+      // リンククリックでメニューを閉じる
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          mobileMenu.classList.add('hidden');
+        });
+      });
+    }
+
+    // 3. トースト通知システム
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      // クラス設定
+      const bgClass = type === 'success' ? 'bg-emerald-500' : 'bg-red-500';
+      toast.className = `flex items-center gap-3 px-5 py-4 rounded-2xl shadow-2xl text-white font-medium transform translate-y-4 opacity-0 transition-all duration-300 pointer-events-auto border border-white/10 ${bgClass}`;
+      
+      // アイコンとコンテンツ
+      toast.innerHTML = `
+        <div class="flex-shrink-0">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div class="text-sm font-semibold">${message}</div>
+      `;
+      
+      container.appendChild(toast);
+      
+      // マウント後のトランジション
+      setTimeout(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+      }, 10);
+      
+      // 3.5秒後に自動消去
+      setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-4');
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3500);
+    }
+
+    // 4. お問い合わせフォーム送信シミュレーション
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submit-btn');
+        const originalText = submitBtn.innerHTML;
+        
+        // ローディング状態
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>送信中...</span>
+        `;
+
+        // 1.5秒後に送信完了トースト表示
+        setTimeout(() => {
+          showToast('お問い合わせが完了しました。担当者より折り返しご連絡いたします！');
+          contactForm.reset();
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+        }, 1500);
+      });
+    }
+
+    // 5. プロンプトコピーインタラクション
+    const copyBtn = document.getElementById('copy-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const promptText = document.getElementById('prompt-text').innerText;
+        
+        navigator.clipboard.writeText(promptText).then(() => {
+          const originalHTML = copyBtn.innerHTML;
+          
+          copyBtn.innerHTML = `
+            <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span class="text-emerald-400">コピーしました！</span>
+          `;
+          copyBtn.classList.add('border-emerald-500/30', 'bg-emerald-950/20');
+          
+          showToast('プロンプトをクリップボードにコピーしました！');
+          
+          setTimeout(() => {
+            copyBtn.innerHTML = originalHTML;
+            copyBtn.classList.remove('border-emerald-500/30', 'bg-emerald-950/20');
+          }, 2000);
+        }).catch(err => {
+          showToast('コピーに失敗しました。直接コピーしてください。', 'error');
+        });
+      });
+    }
+  </script>
+</body>
+</html>
