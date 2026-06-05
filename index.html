@@ -767,22 +767,22 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label for="name" class="block text-sm font-semibold text-slate-700 mb-2">お名前 <span class="text-rose-500 text-xs">*</span></label>
-              <input type="text" id="name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="山田 太郎">
+              <input type="text" id="name" name="name" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="山田 太郎">
             </div>
             <div>
               <label for="email" class="block text-sm font-semibold text-slate-700 mb-2">メールアドレス <span class="text-rose-500 text-xs">*</span></label>
-              <input type="email" id="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="example@domain.com">
+              <input type="email" id="email" name="email" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="example@domain.com">
             </div>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label for="shop-name" class="block text-sm font-semibold text-slate-700 mb-2">店舗名・会社名</label>
-              <input type="text" id="shop-name" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="Analytica Bakery">
+              <input type="text" id="shop-name" name="shop_name" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="Analytica Bakery">
             </div>
             <div>
               <label for="business-type" class="block text-sm font-semibold text-slate-700 mb-2">業態 <span class="text-rose-500 text-xs">*</span></label>
-              <select id="business-type" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 text-sm transition-all bg-white">
+              <select id="business-type" name="business_type" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 text-sm transition-all bg-white">
                 <option value="" disabled selected>選択してください</option>
                 <option value="bakery">パン屋・ベーカリー</option>
                 <option value="cafe">カフェ・喫茶店</option>
@@ -795,7 +795,7 @@
 
           <div>
             <label for="message" class="block text-sm font-semibold text-slate-700 mb-2">お問い合わせ内容 <span class="text-rose-500 text-xs">*</span></label>
-            <textarea id="message" required rows="5" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="お問い合わせ内容をご記入ください。"></textarea>
+            <textarea id="message" name="message" required rows="5" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-800 placeholder-slate-400 text-sm transition-all" placeholder="お問い合わせ内容をご記入ください。"></textarea>
           </div>
 
           <!-- 個人情報同意チェック -->
@@ -949,7 +949,7 @@
       }, 3500);
     }
 
-    // 4. お問い合わせフォーム送信シミュレーション
+    // 4. お問い合わせフォーム送信処理 (FormSubmit連携)
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
       contactForm.addEventListener('submit', (e) => {
@@ -968,13 +968,40 @@
           <span>送信中...</span>
         `;
 
-        // 1.5秒後に送信完了トースト表示
-        setTimeout(() => {
-          showToast('お問い合わせが完了しました。担当者より折り返しご連絡いたします！');
-          contactForm.reset();
+        const formData = new FormData(contactForm);
+        const data = {
+          name: formData.get('name'),
+          email: formData.get('email'),
+          shop_name: formData.get('shop_name') || '未入力',
+          business_type: formData.get('business_type'),
+          message: formData.get('message'),
+          _subject: "【Analytica】LPから新しい無料相談・お問い合わせが届きました"
+        };
+
+        fetch("https://formsubmit.co/ajax/hiinagahiinaba@gmail.com", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(data)
+        })
+        .then(response => {
+          if (response.ok) {
+            showToast('送信が完了しました！初回のみ、メールボックスに届く確認メールを開き、承認ボタンを押してください。');
+            contactForm.reset();
+          } else {
+            throw new Error('Network response was not ok.');
+          }
+        })
+        .catch(error => {
+          console.error('Error sending form:', error);
+          showToast('送信中にエラーが発生しました。しばらく経ってから再度お試しください。', 'error');
+        })
+        .finally(() => {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
-        }, 1500);
+        });
       });
     }
 
